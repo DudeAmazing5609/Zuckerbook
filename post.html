@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>ZuckerBook Post</title>
+	<style>
+		body{
+			font-family: 'lucida console';
+			padding: 15px;
+
+		}
+		#headerbar{
+			display: flex;
+			align-items: center;
+		}
+		#inputarea{
+			margin-left: 30%;
+			margin-right: 70%;
+		}
+	</style>
+</head>
+<body>
+	<div id="headerbar">
+		<h1 style="color: #2D336B">ZuckerBook</h1>
+		<button style="margin-left: 78%; font-size: 30px; font-family: 'lucida console'; border: none; background-color: darkgray;" id="postbtn">Post</button>
+	</div>
+	<div id="inputarea">
+		<input type="text" id="title" placeholder="Title" style="width: 500px; height: 30px; font-family: 'lucida console'; font-size:25px;"><br>
+		<textarea id="bodytext" placeholder="Body" style="width:500px; height: 200px; font-family: 'lucida console'; font-size:25px; margin-top: 15px;"></textarea>
+	</div>
+	<script type="module">
+		  // Import the functions you need from the SDKs you need
+		  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+		  import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+
+		  // TODO: Add SDKs for Firebase products that you want to use
+		  // https://firebase.google.com/docs/web/setup#available-libraries
+
+		  // Your web app's Firebase configuration
+		  const firebaseConfig = {
+		    apiKey: "AIzaSyBOavStuEiXF--gJHoLt0q11nlomkx9pqI",
+		    authDomain: "zuckerbook-ee135.firebaseapp.com",
+		    projectId: "zuckerbook-ee135",
+		    storageBucket: "zuckerbook-ee135.firebasestorage.app",
+		    messagingSenderId: "1044679454146",
+		    appId: "1:1044679454146:web:084841931bf2dd2ca57a5b"
+		  };
+
+		  // Initialize Firebase
+		  const app = initializeApp(firebaseConfig);
+		  const db = getFirestore(app);
+
+		  async function post(){
+		  		const posttitle = document.getElementById('title').value;
+		  		const postbody = document.getElementById('bodytext').value;
+
+		  		const postername = sessionStorage.getItem('uname');
+		  		const posternumber = sessionStorage.getItem('unum');
+
+		  		
+
+		  		const postnumber = "p" + String(Math.floor(1000 + Math.random() * 9000));
+
+		  		
+		  		const docRef = await addDoc(collection(db, "postdb"), {
+		  			'posttitle' : posttitle,
+		  			'postnumber' : postnumber,
+		  			'postbody' : postbody,
+		  			'postername' :postername,
+		  			'posternumber' :posternumber
+		  		})
+
+		  		window.location.href = "main.html";
+		  }
+
+		  document.getElementById("postbtn").onclick = post
+	</script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Le ZuckerBook</title>
+	<style>
+		body{
+			font-family: 'Lucida Console';
+			background-color: #FFF2F2;
+			padding: 15px;
+		}
+		#headerbar{
+			display: flex;
+			align-items: center;
+			margin-bottom: 30px;
+		}
+		#searchbar{
+			height: 30px;
+			width: 500px;
+			font-family: 'lucida console';
+			font-size: 20px;
+			margin-left: 200px;
+		}
+		#findbtn{
+			margin-left: 5px;
+			font-size: 20px;
+			font-family: 'lucida console';
+		}
+		#postbtn{
+			margin-left: 300px;
+			font-family: 'lucida console';
+			font-size: 30px;
+		}
+		.post{
+			background-color: #A9B5DF;
+			padding: 15px;
+			width: 500px;
+			margin-left: auto;
+			margin-right: auto;
+			margin-top: 20px;
+		}
+	</style>
+</head>
+<body>
+	<div id="headerbar">
+		<h1 style="color: #2D336B">ZuckerBook</h1>
+		<input type="text" id="searchbar" placeholder="Find People or Posts">
+		<button id="findbtn">Find</button>
+
+		<button id="postbtn" style="background-color: #7886C7; border: none;">Post</button>
+		<button style="margin-left: 10px; border:none; background-color:#FFF2F2" id="profilemenu"><h1>☰</h1></button>
+	</div>
+	<div id=posts>
+	</div>
+	<script type="module">
+		  // Import the functions you need from the SDKs you need
+		  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+		  import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+		  // TODO: Add SDKs for Firebase products that you want to use
+		  // https://firebase.google.com/docs/web/setup#available-libraries
+
+		  // Your web app's Firebase configuration
+		  const firebaseConfig = {
+		    apiKey: "AIzaSyBOavStuEiXF--gJHoLt0q11nlomkx9pqI",
+		    authDomain: "zuckerbook-ee135.firebaseapp.com",
+		    projectId: "zuckerbook-ee135",
+		    storageBucket: "zuckerbook-ee135.firebasestorage.app",
+		    messagingSenderId: "1044679454146",
+		    appId: "1:1044679454146:web:084841931bf2dd2ca57a5b"
+		  };
+
+		  const app = initializeApp(firebaseConfig);
+		  const db = getFirestore(app);
+
+		  function SelfProfile(){
+		  		var username = sessionStorage.getItem('uname');
+		  		console.log(username)
+		  		window.location.href = `profile.html?user=${username}&s=true`
+		  }
+
+		  async function Finder(){
+		  		const searchinput = document.getElementById("searchbar").value
+
+		  		if(searchinput.charAt(0) == "u"){
+		  			window.location.href = `profile.html?user=${searchinput}&s=false`
+		  		}
+		  		else{		  			
+		  			const postdbsnapshot = await getDocs(collection(db, "postdb"));
+		  			postdbsnapshot.forEach((doc)=> {
+		  				console.log(`checking post: ${doc.data().postnumber}, target: ${searchinput}`)
+		  				if(doc.data().postnumber == searchinput){
+		  					console.log(doc.data().posternumber)
+		  					window.location.href = `postpage.html?title=${doc.data().posttitle}&body=${doc.data().postbody}`
+		  				}
+		  			})
+
+		  		}
+		  }
+
+		  function Post(){
+		  	window.location.href = "post.html"
+		  }
+
+
+		  function AppendPost(postername, posternumber, title, body, postnumber){
+		  		var posthtml = `<div class="post">
+								<p>[${postername} - ${posternumber}]</p>
+								<h2>${title}</h2>
+								<p>${body}</p><br>
+			    				<p>[${postnumber}]</p>
+								</div>
+								`;
+
+				const postsdiv = document.getElementById("posts");
+
+				postsdiv.innerHTML = posthtml + postsdiv.innerHTML
+
+		  }
+		  async function LoadPosts(){
+		  		const postdbsnapshot = await getDocs(collection(db, "postdb"))
+		  		postdbsnapshot.forEach((doc) => {
+		  			var docdata = doc.data();
+		  			AppendPost(docdata.postername, docdata.posternumber, docdata.posttitle, docdata.postbody, docdata.postnumber)
+		  		})
+		  }
+
+		  	document.getElementById("profilemenu").onclick = SelfProfile
+		  	document.getElementById("findbtn").onclick = await Finder
+		  	document.getElementById("postbtn").onclick = Post
+		  	LoadPosts()
+	</script>
+</body>
+</html>

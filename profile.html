@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>ZuckerBook Profile</title>
+	<style>
+		body{
+			font-family: 'lucida console';
+			margin: -0.2px;
+		}
+		#headerbar{
+			display: flex;
+			align-items: center;
+			height: 150px;
+			background-color: #7886C7;
+		}
+		#pfp{
+			height: 100px;
+			width: 100px;
+			background-color: #A9B5DF;
+			margin-left: 30px;
+		}
+		.post{
+			background-color: #A9B5DF;
+			padding: 15px;
+			width: 500px;
+			margin-left: auto;
+			margin-right: auto;
+			margin-top: 20px;
+		}
+	</style>
+</head>
+<body>
+	<div id="headerbar">
+		<div id="pfp">
+			<h1 style="text-align: center; font-size: 90px; margin-top: 5px; color: white; font-family: 'helvetica'" id="profileletter">S</h1>
+		</div>
+		<h1 style="margin-top:-20px;margin-left: 15px; font-family:'helvetica'; color: white;" id="username"></h1><br>
+		<h3 style="margin-top: 35px; float: left; color:lightgray;" id="usernumber"></h3>
+	</div>
+	<div id=posts>
+		<div class="post">
+			<p>[susbaka - U7799]</p>
+			<h2>title</h2>
+			<p>rgtgt erdgurgurg e sweww refgudaf vi bonn ewqafer sesig sdre soddargter fg ds dgfrdgreerg s werfraggorregg ergr regteeww rgr</p><br>
+			<p>[p0000]</p>
+		</div>
+
+	</div>
+	<script type="module">
+		  // Import the functions you need from the SDKs you need
+		  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+		  import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+		  // TODO: Add SDKs for Firebase products that you want to use
+		  // https://firebase.google.com/docs/web/setup#available-libraries
+
+		  // Your web app's Firebase configuration
+		  const firebaseConfig = {
+		    apiKey: "AIzaSyBOavStuEiXF--gJHoLt0q11nlomkx9pqI",
+		    authDomain: "zuckerbook-ee135.firebaseapp.com",
+		    projectId: "zuckerbook-ee135",
+		    storageBucket: "zuckerbook-ee135.firebasestorage.app",
+		    messagingSenderId: "1044679454146",
+		    appId: "1:1044679454146:web:084841931bf2dd2ca57a5b"
+		  };
+
+		  const app = initializeApp(firebaseConfig);
+		  const db = getFirestore(app);
+
+		  const userdb = collection(db, 'userdb');
+
+		  function AppendPost(postername, posternumber, title, body, postnumber){
+		  		var posthtml = `<div class="post">
+								<p>[${postername} - ${posternumber}]</p>
+								<h2>${title}</h2>
+								<p>${body}</p><br>
+			    				<p>[${postnumber}]</p>
+								</div>
+								`;
+
+				const postsdiv = document.getElementById("posts");
+
+				postsdiv.innerHTML = posthtml + postsdiv.innerHTML
+
+		  }
+
+		  function DisplayUserDetails(a, b, s){
+		  		const usernametext = document.getElementById("username").innerText
+		  		const usernumbertext = document.getElementById("usernumber").innerText
+		  		const userpfptext = document.getElementById("profileletter").innerText
+
+		  		if(s){
+		  			usernametext = a
+		  			usernumbertext = b		  			
+		  		} else {
+		  			usernametext = b
+		  			usernumbertext = a
+		  		}
+
+		  		userpfptext = username.charAt(0).toUpperCase()
+		  }
+
+		  function getQueryParam(param) {
+    			const urlParams = new URLSearchParams(window.location.search);
+    			return urlParams.get(param);
+		  }
+
+
+		  function DisplayUserPosts(usernumber, username){
+		  		//get userposts from server
+
+		  		// use usename arg
+		  		var posternumber;
+		  		var title;
+		  		var body;
+		  		// use usernumber arg
+
+		  		//display posts from server
+
+		  		//AppendPost(username, usernumber, title, body, postnumber) 
+		  		//add looping later
+		  }
+
+		  function DisplayContent(username, usernumber, s){
+		  		DisplayUserDetails(username, usernumber, s)
+		  		DisplayUserPosts(usernumber)
+		  }
+
+		  async function LoadPage(){
+		  		var localuser = getQueryParam('user')
+		  		console.log(localuser)
+
+		  		if(getQueryParam('s') == 'true'){
+		  			const userdbsnapshot = await getDocs(collection(db, "userdb"))
+		  			userdbsnapshot.forEach((doc) => {
+		  				if(doc.data().username == localuser){
+		  					var dbusernumber = doc.data().usernumber
+
+		  					console.log(dbusernumber)
+		  					document.getElementById("username").innerText = localuser
+		  					document.getElementById("usernumber").innerText = "-" + dbusernumber
+		  					document.getElementById("profileletter").innerText = localuser.charAt(0).toUpperCase()
+
+		  				}
+		  			})
+		  		} else {
+		  			const userdbsnapshot = await getDocs(collection(db, "userdb"))
+		  			userdbsnapshot.forEach((doc) => {
+		  				if(doc.data().usernumber == localuser){
+		  					var dbusername = doc.data().username
+
+		  					console.log(dbusername)
+		  					document.getElementById("username").innerText = dbusername
+		  					document.getElementById("usernumber").innerText = "-" + localuser
+		  					document.getElementById("profileletter").innerText = dbusername.charAt(0).toUpperCase()
+		  				}
+		  			})		  			
+		  		}
+
+		  }
+		  await LoadPage()
+	</script>
+</body>
+</html>

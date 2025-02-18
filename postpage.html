@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Post</title>
+	<style>
+		body{
+			font-family: 'lucida console';
+			padding:30px		}
+	</style>
+</head>
+<body>
+	<h1 id="title"></h1>
+	<p id="body"></p>
+	<script type="text/javascript">
+		function getQueryParam(param) {
+    		var urlParams = new URLSearchParams(window.location.search);
+    		return urlParams.get(param);
+		}
+
+		document.getElementById("title").innerText = getQueryParam("title")
+		document.getElementById("body").innerText = getQueryParam("body")
+
+	</script>
+</body>
+</html>
