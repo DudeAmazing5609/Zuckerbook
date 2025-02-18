@@ -40,12 +40,6 @@
 		<h3 style="margin-top: 35px; float: left; color:lightgray;" id="usernumber"></h3>
 	</div>
 	<div id=posts>
-		<div class="post">
-			<p>[susbaka - U7799]</p>
-			<h2>title</h2>
-			<p>rgtgt erdgurgurg e sweww refgudaf vi bonn ewqafer sesig sdre soddargter fg ds dgfrdgreerg s werfraggorregg ergr regteeww rgr</p><br>
-			<p>[p0000]</p>
-		</div>
 
 	</div>
 	<script type="module">
@@ -85,46 +79,9 @@
 
 		  }
 
-		  function DisplayUserDetails(a, b, s){
-		  		const usernametext = document.getElementById("username").innerText
-		  		const usernumbertext = document.getElementById("usernumber").innerText
-		  		const userpfptext = document.getElementById("profileletter").innerText
-
-		  		if(s){
-		  			usernametext = a
-		  			usernumbertext = b		  			
-		  		} else {
-		  			usernametext = b
-		  			usernumbertext = a
-		  		}
-
-		  		userpfptext = username.charAt(0).toUpperCase()
-		  }
-
 		  function getQueryParam(param) {
     			const urlParams = new URLSearchParams(window.location.search);
     			return urlParams.get(param);
-		  }
-
-
-		  function DisplayUserPosts(usernumber, username){
-		  		//get userposts from server
-
-		  		// use usename arg
-		  		var posternumber;
-		  		var title;
-		  		var body;
-		  		// use usernumber arg
-
-		  		//display posts from server
-
-		  		//AppendPost(username, usernumber, title, body, postnumber) 
-		  		//add looping later
-		  }
-
-		  function DisplayContent(username, usernumber, s){
-		  		DisplayUserDetails(username, usernumber, s)
-		  		DisplayUserPosts(usernumber)
 		  }
 
 		  async function LoadPage(){
@@ -144,6 +101,15 @@
 
 		  				}
 		  			})
+		  			console.log("checkpoint")
+		  			const postdbsnapshot = await getDocs(collection(db, "postdb"));
+		  			postdbsnapshot.forEach((doc) => {
+		  				if(doc.data().postername == localuser){
+		  					//postername, posternumber, posttitle, postbody, postnumber
+		  					console.log(doc.data())
+		  					AppendPost(doc.data().postername, doc.data().postnumber, doc.data().posttitle, doc.data().postbody, doc.data().postnumber)
+		  				}
+		  			})
 		  		} else {
 		  			const userdbsnapshot = await getDocs(collection(db, "userdb"))
 		  			userdbsnapshot.forEach((doc) => {
@@ -154,6 +120,16 @@
 		  					document.getElementById("username").innerText = dbusername
 		  					document.getElementById("usernumber").innerText = "-" + localuser
 		  					document.getElementById("profileletter").innerText = dbusername.charAt(0).toUpperCase()
+		  				}
+		  			})
+
+		  			const postdbsnapshot = await getDocs(collection(db, "postdb"));
+		  			postdbsnapshot.forEach((doc) => {
+		  				if(doc.data().posternumber == localuser){
+		  					//postername, posternumber, posttitle, postbody, postnumber
+
+		  					console.log(doc.data())
+		  					AppendPost(doc.data().postername, doc.data().postnumber, doc.data().posttitle, doc.data().postbody, doc.data().postnumber)
 		  				}
 		  			})		  			
 		  		}
