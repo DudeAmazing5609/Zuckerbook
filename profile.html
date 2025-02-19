@@ -64,9 +64,8 @@
 
 		  const userdb = collection(db, 'userdb');
 
-		  function AppendPost(postername, posternumber, title, body, postnumber){
+		  function AppendPost(title, body, postnumber){
 		  		var posthtml = `<div class="post">
-								<p>[${postername} - ${posternumber}]</p>
 								<h2>${title}</h2>
 								<p>${body}</p><br>
 			    				<p>[${postnumber}]</p>
@@ -107,7 +106,7 @@
 		  				if(doc.data().postername == localuser){
 		  					//postername, posternumber, posttitle, postbody, postnumber
 		  					console.log(doc.data())
-		  					AppendPost(doc.data().postername, doc.data().postnumber, doc.data().posttitle, doc.data().postbody, doc.data().postnumber)
+		  					AppendPost(doc.data().posttitle, doc.data().postbody, doc.data().postnumber)
 		  				}
 		  			})
 		  		} else {
@@ -129,7 +128,7 @@
 		  					//postername, posternumber, posttitle, postbody, postnumber
 
 		  					console.log(doc.data())
-		  					AppendPost(doc.data().postername, doc.data().postnumber, doc.data().posttitle, doc.data().postbody, doc.data().postnumber)
+		  					AppendPost(doc.data().posttitle, doc.data().postbody, doc.data().postnumber)
 		  				}
 		  			})		  			
 		  		}
