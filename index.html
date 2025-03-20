@@ -90,13 +90,23 @@
 		  				"usernumber" : usernumberhtml,
 		  				"userpass" : passwordhtml
 		  			}
-		  			const userdbRef = await addDoc(userdb, details);
-		  			const passdbRef = await addDoc(passdb, passdetails);
 
-		  			window.alert(`Account Successfully Synthesized, Your User number is ${usernumberhtml}`)
+		  			if(Object.values(passdetails).every(value => value != ""))
+		  			{
+		  				const userdbRef = await addDoc(userdb, details);
+		  				const passdbRef = await addDoc(passdb, passdetails);
 
-		  			cacheuserdata(usernamehtml, usernumberhtml);
-		  			redirecthomepage()
+		  				window.alert(
+		  					`Account Successfully Synthesized, Your User number is ${usernumberhtml}`
+		  				)
+
+		  				cacheuserdata(usernamehtml, usernumberhtml);
+		  			    redirecthomepage()
+		  			}
+		  			else{
+		  				window.alert("Dude you have to enter something")
+		  			}
+
 		  		}
 		  		else{
 		  			const usercredentials = {
