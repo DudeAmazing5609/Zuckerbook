@@ -92,7 +92,7 @@
 		  			const noexistingaccount = passdbsnap.docs.forEach(
 		  					element =>{
 		  						return element != passdetails
-		  					}
+		  					})
 
 		  			if(Object.values(passdetails).every(value => value != "") && noexistingaccount)
 		  			{
