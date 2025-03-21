@@ -44,7 +44,7 @@
 </head>
 <body>
 	<div id="headerbar">
-		<h1 style="color: #2D336B">ZuckerBook</h1>
+		<h1><a href="changelog.html" style="text-decoration: none; color: #2D336B">ZuckerBook</a></h1>
 		<input type="text" id="searchbar" placeholder="Find People or Posts">
 		<button id="findbtn">Find</button>
 
@@ -72,6 +72,10 @@
 
 		  const app = initializeApp(firebaseConfig);
 		  const db = getFirestore(app);
+
+		  if(sessionStorage.getItem('uname') == "" || sessionStorage.getItem('unum') == ""){
+		  		window.location.href = "index.html"
+		  }
 
 		  function SelfProfile(){
 		  		var username = sessionStorage.getItem('uname');
