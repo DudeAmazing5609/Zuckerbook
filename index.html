@@ -70,9 +70,7 @@
 		  		window.location.href = "main.html"
 		  }
 
-		  async function lesgo(){
-				document.getElementById("lesgo").parentNode.removeChild(document.getElementById("lesgo"));
-			  
+		  async function lesgo(){			  
 		  		const SignUp = document.getElementById("signup").checked
 
 		  		const usernamehtml = document.getElementById("username").value
@@ -90,8 +88,13 @@
 		  				"usernumber" : usernumberhtml,
 		  				"userpass" : passwordhtml
 		  			}
+		  			const passdbsnap = await getDocs(passdb);
 
-		  			if(Object.values(passdetails).every(value => value != ""))
+		  			if(Object.values(passdetails).every(value => value != "") && passdbsnap.docs.forEach(
+		  					element =>{
+		  						element != passdetails
+		  					}
+		  				))
 		  			{
 		  				const userdbRef = await addDoc(userdb, details);
 		  				const passdbRef = await addDoc(passdb, passdetails);
@@ -104,7 +107,6 @@
 		  			    redirecthomepage()
 		  			}
 		  			else{
-		  				window.alert("Dude you have to enter something")
 		  			}
 
 		  		}
