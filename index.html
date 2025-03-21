@@ -89,12 +89,12 @@
 		  				"userpass" : passwordhtml
 		  			}
 		  			const passdbsnap = await getDocs(passdb);
-
-		  			if(Object.values(passdetails).every(value => value != "") && passdbsnap.docs.forEach(
+		  			const noexistingaccount = passdbsnap.docs.forEach(
 		  					element =>{
-		  						element != passdetails
+		  						return element != passdetails
 		  					}
-		  				))
+
+		  			if(Object.values(passdetails).every(value => value != "") && noexistingaccount)
 		  			{
 		  				const userdbRef = await addDoc(userdb, details);
 		  				const passdbRef = await addDoc(passdb, passdetails);
