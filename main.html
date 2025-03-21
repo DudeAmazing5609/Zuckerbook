@@ -73,7 +73,7 @@
 		  const app = initializeApp(firebaseConfig);
 		  const db = getFirestore(app);
 
-		  if(sessionStorage.getItem('uname') == "" || sessionStorage.getItem('unum') == ""){
+		  if(sessionStorage.getItem('uname') == null || sessionStorage.getItem('unum') == null){
 		  		window.location.href = "index.html"
 		  }
 
