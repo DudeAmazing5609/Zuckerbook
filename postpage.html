@@ -7,17 +7,15 @@
 	<style>
 		body{
 			font-family: 'lucida console';
-			padding:30px		}
+			padding:30px		
+		}
 	</style>
 </head>
 <body>
 	<h1 id="title"></h1>
 	<p id="body"></p>
-	<script type="text/javascript">
-		function getQueryParam(param) {
-    		var urlParams = new URLSearchParams(window.location.search);
-    		return urlParams.get(param);
-		}
+	<script type="module">
+		import { getQueryParam } from '/ZuckerbookAPI.js'
 
 		document.getElementById("title").innerText = getQueryParam("title")
 		document.getElementById("body").innerText = getQueryParam("body")
