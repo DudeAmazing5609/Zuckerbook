@@ -74,7 +74,7 @@
 		  				if(doc.data().postername == localuser){
 		  					//postername, posternumber, posttitle, postbody, postnumber
 		  					console.log(doc.data())
-		  					AppendPost("","",doc.data().posttitle, doc.data().postbody, doc.data().postnumber)
+		  					AppendPost("","",doc.data().posttitle, doc.data().postbody, doc.data().postnumber, doc.data().likecount, doc.data().dislikecount)
 		  				}
 		  			})
 		  		} else {
@@ -96,7 +96,7 @@
 		  					//postername, posternumber, posttitle, postbody, postnumber
 
 		  					console.log(doc.data())
-		  					AppendPost("", "", doc.data().posttitle, doc.data().postbody, doc.data().postnumber)
+		  					AppendPost("", "", doc.data().posttitle, doc.data().postbody, doc.data().postnumber, doc.data().likecount, doc.data().dislikecount)
 		  				}
 		  			})		  			
 		  		}

@@ -58,6 +58,14 @@
 		  import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
 		  const db = firestoreDB()
 
+		  window.db = db;
+		  window.collection = collection;
+		  window.getDocs = getDocs;
+		  window.addDoc = addDoc;
+		  window.doc = doc;
+		  window.deleteDoc = deleteDoc;
+		  window.setDoc = setDoc;
+
 		  if(sessionStorage.getItem('uname') == null || sessionStorage.getItem('unum') == null){
 		  		window.location.href = "index.html"
 		  }
@@ -95,7 +103,7 @@
 		  		const postdbsnapshot = await getDocs(collection(db, "postdb"))
 		  		postdbsnapshot.forEach((doc) => {
 		  			var docdata = doc.data();
-		  			AppendPost(docdata.postername, docdata.posternumber, docdata.posttitle, docdata.postbody, docdata.postnumber)
+		  			AppendPost(docdata.postername, docdata.posternumber, docdata.posttitle, docdata.postbody, docdata.postnumber, docdata.likecount, docdata.dislikecount)
 		  		})
 		  }
 
@@ -103,6 +111,50 @@
 		  	document.getElementById("findbtn").onclick = await Finder
 		  	document.getElementById("postbtn").onclick = Post
 		  	LoadPosts()
+	</script>
+	<script>
+		// implement like and dislike functionality here
+		async function like(postnum){
+			const postdbsnap = await getDocs(collection(db, "postdb"));
+			postdbsnap.forEach(async (doc) => {
+				if(doc.data().postnumber == postnum){
+					let likers = doc.data().likers
+					console.log(likers)
+					likers.push(sessionStorage.getItem('unum'))
+					likers = [...new Set(likers)]
+
+
+					let likecount = likers.length
+					console.log(likecount)
+					await setDoc(doc.ref, {'likers' : likers,
+									'likecount': likecount}, {merge : true})
+					location.reload()
+
+					
+				}
+			})
+
+		}
+		async function dislike(postnum){
+			const postdbsnap = await getDocs(collection(db, "postdb"));
+			postdbsnap.forEach(async (doc) => {
+				if(doc.data().postnumber == postnum){
+					let dislikers = doc.data().dislikers
+					console.log(dislikers)
+					dislikers.push(sessionStorage.getItem('unum'))
+					dislikers = [...new Set(dislikers)]
+
+
+					let dislikecount = dislikers.length
+					console.log(dislikecount)
+					await setDoc(doc.ref, {'dislikers' : dislikers,
+									'dislikecount': dislikecount}, {merge : true})
+					location.reload()
+					
+				}
+			})
+
+		}
 	</script>
 </body>
 </html>
