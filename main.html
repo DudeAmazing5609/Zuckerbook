@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
+	<meta charset="utf-8"><meta name="google-adsense-account" content="ca-pub-4667691756567516">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Le ZuckerBook</title>
 	<style>
@@ -52,17 +52,6 @@
 		<button style="margin-left: 10px; border:none; background-color:#FFF2F2" id="profilemenu"><h1>☰</h1></button>
 	</div>
 	<div id=posts>
-		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4667691756567516"
-     crossorigin="anonymous"></script>
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-format="fluid"
-     data-ad-layout-key="-fb+5w+4e-db+86"
-     data-ad-client="ca-pub-4667691756567516"
-     data-ad-slot="9106669565"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
 	</div>
 	<script type="module">
 		  import { firestoreDB, AppendPost } from '/ZuckerbookAPI.js'
@@ -76,11 +65,11 @@
 		  window.doc = doc;
 		  window.deleteDoc = deleteDoc;
 		  window.setDoc = setDoc;
-
+/*
 		  if(sessionStorage.getItem('uname') == null || sessionStorage.getItem('unum') == null){
 		  		window.location.href = "index.html"
-		  }
-
+		  } add this when google adsense is verified
+*/
 		  function SelfProfile(){
 		  		var username = sessionStorage.getItem('uname');
 		  		console.log(username)
