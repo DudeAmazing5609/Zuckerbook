@@ -3,159 +3,130 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="google-adsense-account" content="ca-pub-4667691756567516">
-	<title>Le ZuckerBook</title>
+	<title>ZuckerBook Login</title>
 	<style>
 		body{
 			font-family: 'Lucida Console';
+			background-color: #7886C7;
+		}
+		#main{
 			background-color: #FFF2F2;
-			padding: 15px;
-		}
-		#headerbar{
-			display: flex;
-			align-items: center;
-			margin-bottom: 30px;
-		}
-		#searchbar{
-			height: 30px;
-			width: 500px;
-			font-family: 'lucida console';
-			font-size: 20px;
-			margin-left: 200px;
-		}
-		#findbtn{
-			margin-left: 5px;
-			font-size: 20px;
-			font-family: 'lucida console';
-		}
-		#postbtn{
-			margin-left: 300px;
-			font-family: 'lucida console';
-			font-size: 30px;
-		}
-		.post{
-			background-color: #A9B5DF;
-			padding: 15px;
-			width: 500px;
-			margin-left: auto;
+			padding: 30px;
+			width: 280px;
 			margin-right: auto;
-			margin-top: 20px;
+			margin-left: auto;
+			margin-top: 60px;
 		}
 	</style>
 </head>
 <body>
-	<div id="headerbar">
-		<h1><a href="changelog.html" style="text-decoration: none; color: #2D336B">ZuckerBook</a></h1>
-		<input type="text" id="searchbar" placeholder="Find People or Posts">
-		<button id="findbtn">Find</button>
+	<div id="main">
+		<h1 style="margin-bottom: 1px;" >ZuckerBook Login</h1>
 
-		<button id="postbtn" style="background-color: #7886C7; border: none;">Post</button>
-		<button style="margin-left: 10px; border:none; background-color:#FFF2F2" id="profilemenu"><h1>☰</h1></button>
-	</div>
-	<div id=posts>
+		<input type="checkbox" id="signup">
+		<label for="signup" style="color: navy;">Dont have an account yet?</label>
+
+
+		<h2 style="margin-top: 40px; margin-bottom: 5px">Username</h2>
+		<input type="text" id="username" placeholder="Your name dude">
+
+
+		<h2 style="margin-top: 25px; margin-bottom: 5px">Password</h2>
+		<input type="text" id="password" placeholder="Le password">
+		<br>
+		<button style="font-family: 'Lucida Console'; margin-top: 50px; font-size: 20px;" id="lesgo">Les gooo</button>
 	</div>
 	<script type="module">
-		  import { firestoreDB, AppendPost } from '/ZuckerbookAPI.js'
+		  import { firestoreDB } from '/ZuckerbookAPI.js'
 		  import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+
 		  const db = firestoreDB()
 
-		  window.db = db;
-		  window.collection = collection;
-		  window.getDocs = getDocs;
-		  window.addDoc = addDoc;
-		  window.doc = doc;
-		  window.deleteDoc = deleteDoc;
-		  window.setDoc = setDoc;
+		  const userdb = collection(db, 'userdb');
+		  const passdb = collection(db, 'passdb');
 
-		  if(sessionStorage.getItem('uname') == null || sessionStorage.getItem('unum') == null){
-		  		window.location.href = "login.html"
+		  function cacheuserdata(username, usernumber){
+		  		sessionStorage.setItem('uname', username);
+		  		sessionStorage.setItem('unum', usernumber)
 		  }
 
-		  function SelfProfile(){
-		  		var username = sessionStorage.getItem('uname');
-		  		console.log(username)
-		  		window.location.href = `profile.html?user=${username}&s=true`
+		  function redirecthomepage(){
+		  		window.location.href = "main.html"
 		  }
 
-		  async function Finder(){
-		  		const searchinput = document.getElementById("searchbar").value
+		  async function lesgo(){			  
+		  		const SignUp = document.getElementById("signup").checked
 
-		  		if(searchinput.charAt(0) == "u"){
-		  			window.location.href = `profile.html?user=${searchinput}&s=false`
+		  		const usernamehtml = document.getElementById("username").value
+		  		const passwordhtml = document.getElementById("password").value
+
+		  		if(SignUp){
+		  			var usernumberhtml = "u" + String(Math.floor(1000 + Math.random() * 9000))
+		  			
+		  			var details = {
+		  				"username" : usernamehtml,
+		  				"usernumber" : usernumberhtml
+		  			}
+		  			var passdetails = {
+		  				"username" : usernamehtml,
+		  				"usernumber" : usernumberhtml,
+		  				"userpass" : passwordhtml
+		  			}
+		  			const passdbsnap = await getDocs(passdb);
+		  			let passlistmatch = [false]
+
+		  			passdbsnap.docs.forEach(
+		  					element =>{
+		  						if(element.data() == passdetails){
+		  							passlistmatch.push(true)
+		  						} else {
+		  							passlistmatch.push(false)
+		  						}
+		  					})
+		  			console.log(passlistmatch)
+
+		  			if(Object.values(passdetails).every(value => value != "") && !passlistmatch.includes(true))
+		  			{
+		  				const userdbRef = await addDoc(userdb, details);
+		  				const passdbRef = await addDoc(passdb, passdetails);
+
+		  				window.alert(
+		  					`Account Successfully Synthesized, Your User number is ${usernumberhtml}`
+		  				)
+
+		  				cacheuserdata(usernamehtml, usernumberhtml);
+		  			    redirecthomepage()
+		  			}
+		  			else{
+		  			}
+
 		  		}
-		  		else{		  			
-		  			const postdbsnapshot = await getDocs(collection(db, "postdb"));
-		  			postdbsnapshot.forEach((doc)=> {
-		  				console.log(`checking post: ${doc.data().postnumber}, target: ${searchinput}`)
-		  				if(doc.data().postnumber == searchinput){
-		  					console.log(doc.data().posternumber)
-		  					window.location.href = `postpage.html?title=${doc.data().posttitle}&body=${doc.data().postbody}`
-		  				}
-		  			})
+		  		else{
+		  			const usercredentials = {
+		  				"username" : usernamehtml,
+		  				"userpass" : passwordhtml		  				
+		  			}
 
+		  			const passdbsnapshot = await getDocs(collection(db, "passdb"));
+		  			var isValidUser = false;
+
+		  			for(const doc of passdbsnapshot.docs){
+		  					if(usercredentials.username == doc.data().username && usercredentials.userpass == doc.data().userpass){
+		  						console.log("valid user")
+		  						isValidUser = true;
+
+		  						cacheuserdata(usernamehtml, doc.data().usernumber);
+		  						redirecthomepage()		  	
+		  					break;
+		  					}
+		  			}
+		  			if(!isValidUser){
+		  				window.alert("Invalid Username or Password")
+		  			}		  			
 		  		}
 		  }
 
-		  function Post(){
-		  	window.location.href = "post.html"
-		  }
-
-		  async function LoadPosts(){
-		  		const postdbsnapshot = await getDocs(collection(db, "postdb"))
-		  		postdbsnapshot.forEach((doc) => {
-		  			var docdata = doc.data();
-		  			AppendPost(docdata.postername, docdata.posternumber, docdata.posttitle, docdata.postbody, docdata.postnumber, docdata.likecount, docdata.dislikecount)
-		  		})
-		  }
-
-		  	document.getElementById("profilemenu").onclick = SelfProfile
-		  	document.getElementById("findbtn").onclick = await Finder
-		  	document.getElementById("postbtn").onclick = Post
-		  	LoadPosts()
-	</script>
-	<script>
-		// implement like and dislike functionality here
-		async function like(postnum){
-			const postdbsnap = await getDocs(collection(db, "postdb"));
-			postdbsnap.forEach(async (doc) => {
-				if(doc.data().postnumber == postnum){
-					let likers = doc.data().likers
-					console.log(likers)
-					likers.push(sessionStorage.getItem('unum'))
-					likers = [...new Set(likers)]
-
-
-					let likecount = likers.length
-					console.log(likecount)
-					await setDoc(doc.ref, {'likers' : likers,
-									'likecount': likecount}, {merge : true})
-					location.reload()
-
-					
-				}
-			})
-
-		}
-		async function dislike(postnum){
-			const postdbsnap = await getDocs(collection(db, "postdb"));
-			postdbsnap.forEach(async (doc) => {
-				if(doc.data().postnumber == postnum){
-					let dislikers = doc.data().dislikers
-					console.log(dislikers)
-					dislikers.push(sessionStorage.getItem('unum'))
-					dislikers = [...new Set(dislikers)]
-
-
-					let dislikecount = dislikers.length
-					console.log(dislikecount)
-					await setDoc(doc.ref, {'dislikers' : dislikers,
-									'dislikecount': dislikecount}, {merge : true})
-					location.reload()
-					
-				}
-			})
-
-		}
+		  document.getElementById("lesgo").onclick = lesgo
 	</script>
 </body>
 </html>
