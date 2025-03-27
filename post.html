@@ -60,6 +60,8 @@
 					'dislikecount' : 0
 		  		})
 
+				await addDoc(collection(db, "commentdb"), {'linkedpost':postnumber, 'comments':[]})
+
 			  	window.alert(`Post ${postnumber} has been successfully launched`)
 
 		  		window.location.href = "main.html";

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="google-adsense-account" content="ca-pub-4667691756567516">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zuck Comments</title>
+    <style>
+        body{
+            font-family: 'lucida console';
+            background-color: #FFF2F2;
+        }
+        #main{
+            background-color: white;
+            margin-right: auto;
+            margin-left: auto;
+            padding: 20px;
+            width: 500px;
+        }
+        #commentinp{
+            width: 100%;
+            height: 30px;
+            font-family: 'lucida console';
+            font-size: 20px;
+            margin-top: 20px;
+            float: left;
+            background-color: rgb(235, 233, 233);
+            border: none;
+        }
+        #commentbtn{
+            margin-right: -4px;
+            height: 30px;
+            margin-top: 5px;
+            font-size: 20px;
+            font-family: 'lucida console';
+            border: none;
+            background-color: #7886C7;
+        }
+        #input{
+            margin-bottom: 20px;
+        }
+        .comment{
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div id="main">
+        <h1 id="title">Its the real mark zuckerbug</h1>
+        <p id="body">Am not kidding guys believe me plz</p>
+        <hr>
+        <div id="input">
+        <input type="text" id="commentinp" placeholder="Comment"><button id="commentbtn" onclick="comment()">Post</button>
+        </div>
+        <div id="comments">
+        </div>
+    </div>
+    <script type="module">
+        import { firestoreDB, AppendPost, getQueryParam } from '/ZuckerbookAPI.js'
+        import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+
+        const db = firestoreDB()
+
+        var title = document.getElementById("title")
+        var body = document.getElementById("body")
+
+        const commentsdiv = document.getElementById("comments")
+
+        title.innerText = getQueryParam('title')
+        body.innerText = getQueryParam('body')
+        const postnum = getQueryParam("pnum")
+
+        const commentdb = collection(db, 'commentdb');
+
+        const commentdbsnap = await getDocs(collection(db, "commentdb"))
+        commentdbsnap.forEach((doc) => {
+            if(doc.data().linkedpost == postnum){
+                const comments = doc.data().comments
+
+                for (let i of comments){
+                    const authorBody = i.split("|") // [authorNum`authorName, body] 
+
+                    const body = authorBody[1]
+
+                    const author_NumName = authorBody[0].split("`") // [authorNum, authorName]
+
+                    const authorNum = author_NumName[0]
+                    const authorName = author_NumName[1]
+                    console.log(authorName)
+
+
+
+                    commentsdiv.innerHTML += `<div class="comment"><p>[${authorName} - ${authorNum}]</p><p><b>${body}</b></p></div>`
+                }
+            }
+        })
+
+        async function comment(){
+            const comment = document.getElementById("commentinp").value 
+
+            const commentdb = collection(db, 'commentdb');
+            const commentdbsnap = await getDocs(collection(db, "commentdb"))
+            commentdbsnap.forEach(async (doc) => {
+                if(doc.data().linkedpost == postnum){
+                    await setDoc(doc.ref, {
+                        'comments' : [`${sessionStorage.getItem('unum')}\`${sessionStorage.getItem('uname')}|${comment}`, ...doc.data().comments]
+                    }, {merge: true})
+                    location.reload()
+                }
+            })
+            
+        }
+        window.comment = comment
+    </script>
+</body>
+</html>

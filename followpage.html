@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Follow</title>
+    <style>
+        body{
+            font-family: 'lucida console';
+            background-color: #FFF2F2;
+        }
+        #main{
+            margin-right: 300px;
+            margin-left: 300px;
+            margin-top: 50px;
+
+        }
+        #followers{
+            float: left;
+        }
+        #following{
+            float: right;
+        }
+        .bar{
+            width: 47%;
+            background-color: white;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="main">
+        <div id="followers" class="bar">
+            <h1 style="text-align: center;">Followers</h1><br>
+            <h2 id="followercount"></h2>
+        </div>
+        <div id="following" class="bar">
+            <h1 style="text-align: center;">Following</h1><br>
+            <h2 id="followingcount"></h2>
+            <p></p>
+        </div>
+    </div>
+    <script type="module">
+        import { firestoreDB, AppendPost, getQueryParam } from "/ZuckerbookAPI.js";
+        import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+
+        const db = firestoreDB()
+
+        const userdb = collection(db, 'userdb');
+        const userdbsnap = await getDocs(userdb)
+
+        const requestedUser = getQueryParam('u')
+
+        userdbsnap.forEach((doc) => {
+            if(doc.data().usernumber == requestedUser){
+                for(let i = 0; i < doc.data().followers.length; i++){
+                document.getElementById('followers').innerHTML += ">" + doc.data().followers[i] + "<br><br>"
+                }
+                document.getElementById('followercount').innerText = doc.data().followers.length
+                console.log(doc.data().followers.length)
+
+                for(let i = 0; i < doc.data().following.length; i++){
+                document.getElementById('following').innerHTML += ">" + doc.data().following[i] + "<br><br>"
+                }
+                document.getElementById('followingcount').innerText = doc.data().following.length
+                console.log(doc.data().following.length)
+            } 
+        });
+
+    </script>
+</body>
+</html>

@@ -14,12 +14,16 @@
 			align-items: center;
 			height: 150px;
 			background-color: #7886C7;
+			padding-bottom: 30px;
+			padding-left: 40px;
+			padding-top: 10px;
 		}
 		#pfp{
 			height: 100px;
 			width: 100px;
 			background-color: #A9B5DF;
 			margin-left: 30px;
+			margin-right: 20px;
 		}
 		.post{
 			background-color: #A9B5DF;
@@ -33,11 +37,17 @@
 </head>
 <body>
 	<div id="headerbar">
+		<div>
 		<div id="pfp">
 			<h1 style="text-align: center; font-size: 90px; margin-top: 5px; color: white; font-family: 'helvetica'" id="profileletter">S</h1>
+			
 		</div>
-		<h1 style="margin-top:-20px;margin-left: 15px; font-family:'helvetica'; color: white;" id="username"></h1><br>
+		<button style="width: 100px;margin-top: 10px; margin-left: 30px;border: none; height: 30px; font-family: 'lucida console'; font-size: 20px;" id="followbutton">Follow</button>
+		</div>
+		<h1 style="margin-top:-20px;margin-right: -20px; font-family:'helvetica'; color: white;" id="username"></h1><br>
 		<h3 style="margin-top: 35px; float: left; color:lightgray;" id="usernumber"></h3>
+		
+
 	</div>
 	<div id=posts>
 
@@ -49,35 +59,19 @@
 
 		  const db = firestoreDB()
 
-		  const userdb = collection(db, 'userdb');
+		  const userdbsnap = await getDocs(collection(db, "userdb"))
+		  userdbsnap.forEach((doc) => {
+			if(doc.data().usernumber == getQueryParam('user')){
+				if(doc.data().followers.includes(sessionStorage.getItem('uname') + " - " + sessionStorage.getItem('unum'))){
+					document.getElementById('followbutton').innerText = "Unfollow"
+				}
+			}
+		  })
+
 
 		  async function LoadPage(){
 		  		var localuser = getQueryParam('user')
 		  		console.log(localuser)
-
-		  		if(getQueryParam('s') == 'true'){
-		  			const userdbsnapshot = await getDocs(collection(db, "userdb"))
-		  			userdbsnapshot.forEach((doc) => {
-		  				if(doc.data().username == localuser){
-		  					var dbusernumber = doc.data().usernumber
-
-		  					console.log(dbusernumber)
-		  					document.getElementById("username").innerText = localuser
-		  					document.getElementById("usernumber").innerText = "-" + dbusernumber
-		  					document.getElementById("profileletter").innerText = localuser.charAt(0).toUpperCase()
-
-		  				}
-		  			})
-		  			console.log("checkpoint")
-		  			const postdbsnapshot = await getDocs(collection(db, "postdb"));
-		  			postdbsnapshot.forEach((doc) => {
-		  				if(doc.data().postername == localuser){
-		  					//postername, posternumber, posttitle, postbody, postnumber
-		  					console.log(doc.data())
-		  					AppendPost("","",doc.data().posttitle, doc.data().postbody, doc.data().postnumber, doc.data().likecount, doc.data().dislikecount)
-		  				}
-		  			})
-		  		} else {
 		  			const userdbsnapshot = await getDocs(collection(db, "userdb"))
 		  			userdbsnapshot.forEach((doc) => {
 		  				if(doc.data().usernumber == localuser){
@@ -94,15 +88,67 @@
 		  			postdbsnapshot.forEach((doc) => {
 		  				if(doc.data().posternumber == localuser){
 		  					//postername, posternumber, posttitle, postbody, postnumber
-
-		  					console.log(doc.data())
 		  					AppendPost("", "", doc.data().posttitle, doc.data().postbody, doc.data().postnumber, doc.data().likecount, doc.data().dislikecount)
 		  				}
 		  			})		  			
 		  		}
 
-		  }
 		  await LoadPage()
+
+		  const followbutton = document.getElementById('followbutton')
+
+		  followbutton.onclick = follow
+
+		  async function follow() {
+			const userdbsnapshot = await getDocs(collection(db, "userdb"))
+			userdbsnapshot.forEach((doc) => {
+				if(doc.data().usernumber == getQueryParam('user')){
+
+					var reqUserDoc = doc
+
+					var formattedFollower = sessionStorage.getItem('uname') + " - " + sessionStorage.getItem('unum')
+
+					if(followbutton.innerText == "Follow"){
+						followbutton.innerText = "Unfollow"
+
+						setDoc(doc.ref, {
+							'followers' : [...doc.data().followers, formattedFollower]
+						}, {merge: true})
+
+						userdbsnapshot.forEach((doc) => {
+							if(doc.data().usernumber == sessionStorage.getItem('unum')){
+								setDoc(doc.ref, {
+									'following' : [...doc.data().following, reqUserDoc.data().username + " - " + getQueryParam('user')]
+								}, {merge: true}
+								)
+							}
+						})
+
+						console.log("Followed")
+					
+					} else {
+						followbutton.innerText = "Follow"
+
+						setDoc(doc.ref, {
+							'followers' : [...doc.data().followers.filter(item => item !== formattedFollower)]
+						}, {merge : true})
+
+						userdbsnapshot.forEach((doc) => {
+							if(doc.data().usernumber == sessionStorage.getItem('unum')){
+								setDoc(doc.ref, {
+									'following' : [...doc.data().following.filter(item => item !== getQueryParam('user') + " - " + reqUserDoc.data().username)]
+								}, {merge: true}
+								)
+							}
+						})
+
+						console.log("Unfollowed")
+					}
+				}
+			})
+
+			
+		}
 	</script>
 </body>
 </html>
