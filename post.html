@@ -40,31 +40,43 @@
 		  		const posttitle = document.getElementById('title').value;
 		  		const postbody = document.getElementById('bodytext').value;
 
-		  		const postername = sessionStorage.getItem('uname');
-		  		const posternumber = sessionStorage.getItem('unum');
+				if(posttitle != "" || formattedPostbody != ""){
+					var formattedPostbody;
 
-		  		
+					if(postbody.split("").length > 200){
+						const splitchar = postbody.split("")[200]
+						formattedPostbody = postbody.split(splitchar)[0]
+					} else {
+						formattedPostbody = postbody
+					}
 
-		  		const postnumber = "p" + String(Math.floor(1000 + Math.random() * 9000));
+					const postername = sessionStorage.getItem('uname');
+					const posternumber = sessionStorage.getItem('unum');
 
-		  		
-		  		const docRef = await addDoc(collection(db, "postdb"), {
-		  			'posttitle' : posttitle,
-		  			'postnumber' : postnumber,
-		  			'postbody' : postbody,
-		  			'postername' :postername,
-		  			'posternumber' :posternumber,
-					'likers' : [],
-					'likecount' : 0,
-					'dislikers' : [],
-					'dislikecount' : 0
-		  		})
+					
 
-				await addDoc(collection(db, "commentdb"), {'linkedpost':postnumber, 'comments':[]})
+					const postnumber = "p" + String(Math.floor(1000 + Math.random() * 9000));
 
-			  	window.alert(`Post ${postnumber} has been successfully launched`)
+					const docRef = await addDoc(collection(db, "postdb"), {
+						'posttitle' : posttitle,
+						'postnumber' : postnumber,
+						'postbody' : formattedPostbody,
+						'postername' :postername,
+						'posternumber' :posternumber,
+						'likers' : [],
+						'likecount' : 0,
+						'dislikers' : [],
+						'dislikecount' : 0
+					})
 
-		  		window.location.href = "main.html";
+					await addDoc(collection(db, "commentdb"), {'linkedpost':postnumber, 'comments':[]})
+
+					window.alert(`Post ${postnumber} has been successfully launched`)
+
+					window.location.href = "main.html";
+				} else {
+					window.alert("Idiot, you need to fill out all the fields")
+				}
 		  }
 
 		  document.getElementById("postbtn").onclick = post

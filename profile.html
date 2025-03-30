@@ -17,6 +17,7 @@
 			padding-bottom: 30px;
 			padding-left: 40px;
 			padding-top: 10px;
+			padding-right: 10px;
 		}
 		#pfp{
 			height: 100px;
@@ -39,15 +40,14 @@
 	<div id="headerbar">
 		<div>
 		<div id="pfp">
-			<h1 style="text-align: center; font-size: 90px; margin-top: 5px; color: white; font-family: 'helvetica'" id="profileletter">S</h1>
-			
+			<img src="" width="100" height="100" id="profilepic">
 		</div>
+		
 		<button style="width: 100px;margin-top: 10px; margin-left: 30px;border: none; height: 30px; font-family: 'lucida console'; font-size: 20px;" id="followbutton">Follow</button>
 		</div>
 		<h1 style="margin-top:-20px;margin-right: -20px; font-family:'helvetica'; color: white;" id="username"></h1><br>
-		<h3 style="margin-top: 35px; float: left; color:lightgray;" id="usernumber"></h3>
+		<h3 style="margin-top: 35px; float: left; color:black;" id="usernumber"></h3>
 		
-
 	</div>
 	<div id=posts>
 
@@ -59,6 +59,66 @@
 
 		  const db = firestoreDB()
 
+		  const hexinvertdict = {
+				'0' : 'f',
+				'1' : 'e',
+				'2' : 'd',
+				'3' : 'c',
+				'4' : 'b',
+				'5' : 'a',
+				'6' : '9',
+				'7' : '8',
+				'8' : '7',
+				'9' : '6',
+				'a' : '5',
+				'b' : '4',
+				'c' : '3',
+				'd' : '2',
+				'e' : '1',
+				'f' : '0'
+		  }
+
+		  const hexbtndict = {
+				'0' : '2',
+				'1' : '3',
+				'2' : '4',
+				'3' : '5',
+				'4' : '6',
+				'5' : '7',
+				'6' : '8',
+				'7' : '9',
+				'8' : '6',
+				'9' : '7',
+				'a' : '8',
+				'b' : '9',
+				'c' : 'a',
+				'd' : 'b',
+				'e' : 'c',
+				'f' : 'd'
+		  }
+
+		  function hexdarken(hex){
+				var hashremovedhex = hex.split('#')[1]
+
+				var hexarray = ['#']
+
+				for (let i of hashremovedhex){
+					hexarray.push(hexbtndict[i])
+				}
+				return hexarray.join('')			
+		  }
+
+		  function hexinvert(hex){
+				var hashremovedhex = hex.split('#')[1]
+
+				var hexarray = ['#']
+
+				for (let i of hashremovedhex){
+					hexarray.push(hexinvertdict[i])
+				}
+				return hexarray.join('')
+		  }
+
 		  const userdbsnap = await getDocs(collection(db, "userdb"))
 		  userdbsnap.forEach((doc) => {
 			if(doc.data().usernumber == getQueryParam('user')){
@@ -67,6 +127,11 @@
 				}
 			}
 		  })
+
+		  if(getQueryParam('s') == 'true'){
+			console.log("Self Profile")
+			document.getElementById('headerbar').innerHTML += `<button style="margin-left: auto; margin-bottom: auto; padding: 10px; font-size: 30px; border: none; background-color: #8f9cd6;" onclick="window.location.href='/customizedProfile.html'" id='customizebtn'>🧪</button>`
+		  }
 
 
 		  async function LoadPage(){
@@ -80,7 +145,15 @@
 		  					console.log(dbusername)
 		  					document.getElementById("username").innerText = dbusername
 		  					document.getElementById("usernumber").innerText = "-" + localuser
-		  					document.getElementById("profileletter").innerText = dbusername.charAt(0).toUpperCase()
+		  					document.getElementById("profilepic").src = doc.data().pfpembed
+							document.getElementById("headerbar").style.background = doc.data().bannercolor
+							if(getQueryParam('s') == 'true'){
+								document.getElementById("customizebtn").style.background = hexdarken(doc.data().bannercolor)
+							}
+								document.getElementById("username").style.color = hexinvert(doc.data().bannercolor)
+								document.getElementById("usernumber").style.color = hexinvert(doc.data().bannercolor)
+								document.getElementById("followbutton").style.background = hexdarken(doc.data().bannercolor)
+								console.log(hexinvert(doc.data().bannercolor))
 		  				}
 		  			})
 

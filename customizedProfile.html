@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customization</title>
+    <style>
+        body{
+            font-family: 'lucida console';
+            background-color: #FFF2F2;
+            padding: 20px;
+        }
+        .updBtn{
+            border: none;
+            background-color: #A9B5DF;
+            padding: 5px;
+            width: 100px;
+            font-family: 'lucida console';
+            font-size: 15px;
+            float: left;
+        }
+        .updBtn:active{
+            background-color: #7886C7;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; color: #2D336B; margin-bottom: 30px;">Zuckerbook Customization</h1>
+    <button class="updBtn" onclick="UpdPfp()">Update</button><input type="text" id="profileembed" placeholder="Profile picture URL" style="background-color: lightgray;border: none; height: 23px;"><br>
+    <button class="updBtn" style="margin-top: 15px;" onclick="UpdBanr()">Update</button><input type="color" style="float: left; margin-top: 15px; border: none;" id="colorpicker"><p style="float: left; margin-top: 20px;">Profile Banner Color</p>
+
+    <script type="module">
+        document.getElementById("colorpicker").value = "#7886C7";
+
+        import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+        import { firestoreDB, getQueryParam } from "/ZuckerbookAPI.js";
+
+        const db = firestoreDB();
+        const user = sessionStorage.getItem("unum");
+        console.log(user);
+
+        const userdbsnap = await getDocs(collection(db, "userdb"));
+        
+        function UpdPfp(){
+            userdbsnap.forEach((doc) => {
+                if(doc.data().usernumber == user){
+                    setDoc(doc.ref, {
+                        'pfpembed' : document.getElementById("profileembed").value
+                    }, {merge : true});
+                }
+            });
+        }
+        
+        function UpdBanr(){
+            userdbsnap.forEach((doc) => {
+                if(doc.data().usernumber == user){
+                    setDoc(doc.ref, {
+                        'bannercolor' : document.getElementById("colorpicker").value
+                    }, {merge : true});
+                }
+            });
+        }
+
+        window.UpdPfp =UpdPfp;
+        window.UpdBanr = UpdBanr;
+    </script>
+</body>
+</html>
